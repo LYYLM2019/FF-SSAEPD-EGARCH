@@ -30,8 +30,3 @@ for j=1:m
         end
     end 
 end
-
-% y1=y(:,1);
-% y1cdf=y_cdf(:,1);
-% % plot(y1 y1cdf);
-% n=6;

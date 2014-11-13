@@ -12,7 +12,6 @@
 
 clc;
 clear;
-% Output file names and xls sheet names
 bb1=char('s1b1.mat','s2b1.mat','s3b1.mat','s4b1.mat','s5b1.mat','s6b1.mat');
 bb2=char('s1b2.mat','s2b2.mat','s3b2.mat','s4b2.mat','s5b2.mat','s6b2.mat');
 bb3=char('s1b3.mat','s2b3.mat','s3b3.mat','s4b3.mat','s5b3.mat','s6b3.mat');
@@ -21,7 +20,7 @@ signX=char('sign1','sign2','sign3','sign4','sign5','sign6');
 pvalX=char('pval1','pval2','pval3','pval4','pval5','pval6');
 
 %% Main
-for k=1:6
+for k=1:1
     %Initialise
     [data1,data2]=xlsload(k);
     para_est=zeros(25,11);
@@ -100,13 +99,15 @@ for k=1:6
         end
 %%   Kolmogorov-Smirnov Test  
 % generate 'xt',AEPD random number
-       xxt=randaepd(para(6,1),para(7,1),para(5,1),n);
-        alphas=para(5,1)*kep(para(6,1))/(para(5,1)*kep(para(7,1))+(1-para(5,1))*kep(para(7,1)));
-        ww=para(5,1)*kep(para(6,1))+(1-para(5,1))*kep(para(7,1));
-        xt=xxt/ww;
+        alpha=para(5,1);
+        p1=para(6,1);
+        p2=para(7,1);
+        xxt=randaepd(p1,p2,alpha,n);
+        B=alpha*kep(p1)+(1-alpha)*kep(p2);
+        xt=xxt/B;
 %get 'zt_0',theoretical SSAEPD
-        e_aepd=E_aepd(para(5,1),para(6,1),para(7,1));
-        var_aepd=Var_aepd(para(5,1),para(6,1),para(7,1));
+        e_aepd=E_aepd(alpha,p1,p2);
+        var_aepd=Var_aepd(alpha,p1,p2);
         zt_0=(xt-e_aepd)/sqrt(var_aepd);
 %get E|zt|
         Ezt=sum(abs(zt_0))/n;
@@ -117,7 +118,7 @@ for k=1:6
         E=zt*sqrt(var_aepd)+e_aepd; 
 % make sure c include E's elements    
         c=(min(E)-1:.01: max(E)+1)';
-        v_cdf=aepdcdf(c,para(6,1),para(7,1),para(5,1),0,1); 
+        v_cdf=aepdcdf(c,p1,p2,alpha,0,1); 
         [h,pval, ksstat,cv]=kstest(E,[c,v_cdf],0.05); 
         h2(i)=h;
         p2(i)=pval;
